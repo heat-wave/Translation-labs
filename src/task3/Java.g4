@@ -115,12 +115,26 @@ arrayInitializer
 statement
     :   block
     |   'if' parExpression statement ('else' statement)?
+    |   'for' '(' forControl ')' statement
     |   'return' expression? ';'
     |   'throw' expression ';'
     |   'break' Identifier? ';'
     |   ';'
     |   statementExpression ';'
     |   Identifier ':' statement
+    ;
+
+forControl
+    :   forInit? ';' expression? ';' forUpdate?
+    ;
+
+forInit
+    :   localVariableDeclaration
+    |   expressionList
+    ;
+
+forUpdate
+    :   expressionList
     ;
 
 parExpression
@@ -395,7 +409,7 @@ StringLiteral
 
 
 Identifier
-    :   [a-zA-Z$_] [a-zA-Z0-9$_]*
+    :   [a-zA-Z$_]+[a-zA-Z0-9$_]*
     ;
 
 AT : '@';

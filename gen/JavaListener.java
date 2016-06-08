@@ -1,5 +1,4 @@
-// Generated from Java.g4 by ANTLR 4.5
-import org.antlr.v4.runtime.misc.NotNull;
+// Generated from /home/heat_wave/IdeaProjects/ANTLR/src/Java.g4 by ANTLR 4.5.1
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
@@ -257,6 +256,36 @@ public interface JavaListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitStatement(JavaParser.StatementContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link JavaParser#forControl}.
+	 * @param ctx the parse tree
+	 */
+	void enterForControl(JavaParser.ForControlContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link JavaParser#forControl}.
+	 * @param ctx the parse tree
+	 */
+	void exitForControl(JavaParser.ForControlContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link JavaParser#forInit}.
+	 * @param ctx the parse tree
+	 */
+	void enterForInit(JavaParser.ForInitContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link JavaParser#forInit}.
+	 * @param ctx the parse tree
+	 */
+	void exitForInit(JavaParser.ForInitContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link JavaParser#forUpdate}.
+	 * @param ctx the parse tree
+	 */
+	void enterForUpdate(JavaParser.ForUpdateContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link JavaParser#forUpdate}.
+	 * @param ctx the parse tree
+	 */
+	void exitForUpdate(JavaParser.ForUpdateContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link JavaParser#parExpression}.
 	 * @param ctx the parse tree

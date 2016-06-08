@@ -1,3 +1,5 @@
+package task3;
+
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
@@ -21,6 +23,11 @@ public class Test {
         ParseTreeWalker walker = new ParseTreeWalker();
         ObfuscatedJavaListener obfuscator = new ObfuscatedJavaListener(tokens, parser.varCount);
         walker.walk(obfuscator, tree);
+
+        for (int id = 0; id < 10; id++) {
+            id = id;
+        }
+
 
         System.out.println(obfuscator.rewriter.getText());
     }

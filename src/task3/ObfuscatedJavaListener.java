@@ -1,3 +1,5 @@
+package task3;
+
 import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.TokenStreamRewriter;
 
@@ -16,6 +18,7 @@ class ObfuscatedJavaListener extends JavaBaseListener {
     private HashSet<String> currentBlockVarNames;
     private Random random;
     private String template;
+    private boolean inFor;
 
     ObfuscatedJavaListener(TokenStream tokens, int count) {
         rewriter = new TokenStreamRewriter(tokens);
@@ -24,6 +27,7 @@ class ObfuscatedJavaListener extends JavaBaseListener {
         dummyVarNames = new HashSet<>();
         random = new Random();
         template = makeTemplate(count);
+        inFor = false;
     }
 
     @Override
@@ -37,6 +41,14 @@ class ObfuscatedJavaListener extends JavaBaseListener {
         rewriter.replace(ctx.start, ctx.stop, obfuscatedVarNames.get(name));
     }
 
+    @Override public void enterForControl(JavaParser.ForControlContext ctx) {
+        inFor = true;
+    }
+
+    @Override public void exitForControl(JavaParser.ForControlContext ctx) {
+        inFor = false;
+    }
+
     @Override public void enterBlock(JavaParser.BlockContext ctx) {
     }
 
@@ -45,6 +57,9 @@ class ObfuscatedJavaListener extends JavaBaseListener {
     }
 
     @Override public void enterBlockStatement(JavaParser.BlockStatementContext ctx) {
+        if (ctx.getText().startsWith("return") || ctx.getText().startsWith("throw")
+                || ctx.getText().startsWith("break") || ctx.getText().startsWith("for") || inFor)
+            return;
         switch (random.nextInt(3)) {
             case 0:
                 return;
@@ -75,6 +90,8 @@ class ObfuscatedJavaListener extends JavaBaseListener {
                         rewriter.insertAfter(ctx.stop, " " + retrieved + " = " + retrieved + ";");
                         break;
                     case 1:
+                        if (currentBlockVarNames.size() == 0)
+                            return;
                         retrieved = (String)currentBlockVarNames.toArray()[random.nextInt(currentBlockVarNames.size())];
                         rewriter.insertAfter(ctx.stop,
                                 " " + retrieved + " = " + retrieved + " == " + retrieved + " ? " + retrieved + " : " + retrieved + ";");
