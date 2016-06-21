@@ -26,7 +26,7 @@ nonterminalProduction : nonterminalVariant* JAVA_CODE? ;
 
 terminalProduction : STRING+ ;
 
-NON_TERM_NAME : [a-z] [a-z_0-9]* ;
+NON_TERM_NAME : [a-z] [a-zA-Z_0-9]* ;
 TERM_NAME : [A-Z] [A-Z_0-9]* ;
 MIXED_CASE : [A-Za-z] [a-z_A-Z0-9]* ;
 JAVA_CODE : '{' (~[{}]+ JAVA_CODE?)* '}' ;

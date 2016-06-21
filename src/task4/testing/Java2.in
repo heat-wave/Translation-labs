@@ -1,0 +1,359 @@
+@header {
+package task4.testproduction;
+}
+
+@members {
+    int varCount = 0;
+}
+
+compilationUnit
+    :   packageDeclaration modifiers typeDeclaration
+    ;
+
+packageDeclaration
+    :   PACKAGE qualifiedName SEMICOLON
+    ;
+
+importDeclaration
+    :   IMPORT qualifiedName importAll SEMICOLON
+    ;
+
+SPACE : ' ' | '\n' | '\t';
+
+importAll
+    :   DOT MUL | ;
+
+qualifiedName
+    :   identifier qualifiedNameTrail ;
+
+qualifiedNameTrail
+    :   DOT qualifiedName qualifiedNameTrail | ;
+
+modifiers
+    :   publicT publicTrail | ;
+
+publicT: PUBLIC | PROTECTED | PRIVATE | ;
+publicTrail: STATIC staticTrail | staticTrail;
+staticTrail: ABSTRACT abstractTrail| abstractTrail;
+abstractTrail: FINAL | ;
+
+classDeclaration
+    :   CLASS identifier extendsT ;
+
+extendsT
+    :   EXTENDS type extendsTrail | extendsTrail;
+
+extendsTrail
+    :   IMPLEMENTS typeList classBody | classBody;
+
+type
+    :   primitiveType arraysT | nonPrimitiveType arraysT;
+
+arraysT
+    :   LBRACK RBRACK arraysT | ;
+
+typeList
+    :   type | COMMA typeList ;
+
+nonPrimitiveType
+    :   identifier identifiersRec ;
+
+primitiveType -> String
+    :   BOOLEAN {return BOOLEAN.get(0); }
+        | CHAR {return CHAR.get(0); }
+        | BYTE {return BYTE.get(0); }
+        | SHORT {return SHORT.get(0); }
+        | INT {return INT.get(0); }
+        | LONG {return LONG.get(0); }
+        | FLOAT {return FLOAT.get(0); }
+        | DOUBLE {return DOUBLE.get(0); };
+
+identifiersRec
+    :   identifier identifiersRec | ;
+
+classBody
+    :   LBRACE classBodyDeclaration RBRACE
+    ;
+
+classBodyDeclaration
+    :   SEMICOLON classBodyDeclarationTrail
+    |   block classBodyDeclarationTrail
+    |   modifiers memberDeclaration classBodyDeclarationTrail
+    |   memberDeclaration classBodyDeclarationTrail;
+
+classBodyDeclarationTrail : classBodyDeclaration | ;
+
+memberDeclaration
+    :   methodDeclaration | localVariableDeclaration;
+
+methodDeclaration
+    :   VOID identifier LPAREN formalParameterList RPAREN methodBodyT ;
+
+formalParameterList
+    :   formalParameter formalParametersT | ;
+
+formalParametersT
+    :   COMMA formalParameter formalParametersT | ;
+
+formalParameter
+    :   type variableDeclaratorId ;
+
+variableDeclaratorId
+    :   identifier arraysT ;
+
+methodBodyT
+    :   block | SEMICOLON ;
+
+block
+    :   LBRACE blockStatementsRec RBRACE ;
+
+blockStatementsRec
+    :   blockStatement blockStatementsRec | ;
+
+blockStatement
+    :   modifiers varOrTypeDeclaration | statement;
+
+varOrTypeDeclaration
+    :   localVariableDeclaration | typeDeclaration;
+
+localVariableDeclaration
+    :   type identifier localVariableInitT SEMICOLON;
+
+localVariableInitT
+    :   ASSIGN expression | ;
+
+typeDeclaration
+    :   classDeclaration | SEMICOLON ;
+
+statement
+    :   block
+    |   IF parExpression statement elseT
+    |   RETURN expressionT SEMICOLON
+    |   THROW expression SEMICOLON
+    |   BREAK identifier SEMICOLON
+    |   SEMICOLON
+    |   statementExpression SEMICOLON;
+
+statementExpression
+    :   expression
+    ;
+
+parExpression
+    :   LPAREN expression RPAREN ;
+
+elseT
+    :   statement | ;
+
+expressionT
+    :   expression | ;
+
+expression
+    :   primary expressionPrime
+    |   NEW creator expressionPrime
+    |   LPAREN type RPAREN expression expressionPrime
+    |   mathop expression expressionPrime
+    ;
+
+expressionPrime
+    :   DOT identifier expressionPrime
+    |   LBRACK expression RBRACK expressionPrime
+    |   LPAREN expressionList RPAREN expressionPrime
+    |   division expression expressionPrime
+    |   INSTANCEOF type expressionPrime
+    |   comp expression expressionPrime
+    |   CARET expression expressionPrime
+    |   AND expression expressionPrime
+    |   OR expression expressionPrime
+    |   QUESTION expression COLON expression expressionPrime
+    |   ;
+
+mathop: ADD | SUB ;
+division: MUL | DIV | MOD;
+comp: LE | GE | GT | LT | EQUAL | NOTEQUAL;
+
+creator
+    :   createdName classCreatorRest
+    ;
+
+createdName
+    :   identifier
+    |   primitiveType
+    ;
+
+classCreatorRest
+    :   arguments classBodyT
+    ;
+
+classBodyT: classBody | ;
+
+primary
+    :   THIS
+    |   SUPER
+    |   literal
+    |   identifier ;
+
+arguments
+    :   LPAREN expressionList RPAREN | ;
+
+expressionList
+    :   expression COMMA expressionList |
+    ;
+
+
+literal
+    :   numericLiteral
+    |   characterLiteral
+    |   stringLiteral
+    |   booleanLiteral
+    |   NULL ;
+
+
+LPAREN          : '(';
+RPAREN          : ')';
+LBRACE          : '{';
+RBRACE          : '}';
+LBRACK          : '[';
+RBRACK          : ']';
+SEMI            : ';';
+COMMA           : ',';
+DOT             : '.';
+SEMICOLON       : ';';
+
+ABSTRACT      : 'abstract';
+ASSERT        : 'assert';
+BOOLEAN       : 'boolean';
+BREAK         : 'break';
+BYTE          : 'byte';
+CASE          : 'case';
+CATCH         : 'catch';
+CHAR          : 'char';
+CLASS         : 'class';
+CONST         : 'const';
+CONTINUE      : 'continue';
+DEFAULT       : 'default';
+DO            : 'do';
+DOUBLE        : 'double';
+ELSE          : 'else';
+ENUM          : 'enum';
+EXTENDS       : 'extends';
+FINAL         : 'final';
+FINALLY       : 'finally';
+FLOAT         : 'float';
+FOR           : 'for';
+IF            : 'if';
+GOTO          : 'goto';
+IMPLEMENTS    : 'implements';
+IMPORT        : 'import';
+INSTANCEOF    : 'instanceof';
+INT           : 'int';
+INTERFACE     : 'interface';
+LONG          : 'long';
+NATIVE        : 'native';
+NEW           : 'new';
+PACKAGE       : 'package';
+PRIVATE       : 'private';
+PROTECTED     : 'protected';
+PUBLIC        : 'public';
+RETURN        : 'return';
+SHORT         : 'short';
+STATIC        : 'static';
+STRICTFP      : 'strictfp';
+SUPER         : 'super';
+SWITCH        : 'switch';
+SYNCHRONIZED  : 'synchronized';
+THIS          : 'this';
+THROW         : 'throw';
+THROWS        : 'throws';
+TRANSIENT     : 'transient';
+TRY           : 'try';
+VOID          : 'void';
+VOLATILE      : 'volatile';
+WHILE         : 'while';
+
+ASSIGN          : '=';
+GT              : '>';
+LT              : '<';
+BANG            : '!';
+TILDE           : '~';
+QUESTION        : '?';
+COLON           : ':';
+EQUAL           : '==';
+LE              : '<=';
+GE              : '>=';
+NOTEQUAL        : '!=';
+AND             : '&&';
+OR              : '||';
+ADD             : '+';
+SUB             : '-';
+MUL             : '*';
+DIV             : '/';
+CARET           : '^';
+MOD             : '%';
+
+ADD_ASSIGN      : '+=';
+SUB_ASSIGN      : '-=';
+MUL_ASSIGN      : '*=';
+DIV_ASSIGN      : '/=';
+AND_ASSIGN      : '&=';
+OR_ASSIGN       : '|=';
+XOR_ASSIGN      : '^=';
+MOD_ASSIGN      : '%=';
+
+ZERO : '0';
+DIGIT :  '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
+NONZERODIGIT :  '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
+
+numericLiteral
+    :   ZERO zeroNumericTrail | NONZERODIGIT nonzeroNumericTrail;
+
+zeroNumericTrail
+    :   DOT oneOrMoreDigits | ;
+
+nonzeroNumericTrail
+    :   ZERO nonzeroNumericTrail | NONZERODIGIT nonzeroNumericTrail | zeroNumericTrail;
+
+digits:
+    ZERO digits | NONZERODIGIT digits |;
+
+oneOrMoreDigits:
+    ZERO digits | NONZERODIGIT digits;
+
+floatingPointLiteral
+    :   digits DOT oneOrMoreDigits
+    ;
+
+booleanLiteral
+    :   TRUE
+    |   FALSE
+    ;
+
+TRUE: 'true';
+FALSE:'false';
+
+SINGLEQUOTE: '\'';
+DOUBLEQUOTE: '\"';
+
+characterLiteral: SINGLEQUOTE anyIdSymbol SINGLEQUOTE;
+stringLiteral: DOUBLEQUOTE anyIdSymbols DOUBLEQUOTE;
+
+identifier
+    :   NONDIGITIDSYMBOL anyIdSymbols
+    ;
+
+NONDIGITIDSYMBOL:  'a' | 'b' | 'c' | 'd' | 'e' | 'f' |
+                  'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm' |
+                  'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't' |
+                  'u' | 'v' | 'w' | 'x' | 'y' | 'z' |
+                  'A' | 'B' | 'C' | 'D' | 'E' | 'F' |
+                  'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' |
+                  'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' |
+                  'U' | 'V' | 'W' | 'X' | 'Y' | 'Z' | '$' | '_';
+anyIdSymbol: ZERO | NONZERODIGIT | NONDIGITIDSYMBOL;
+anyIdSymbols: anyIdSymbol anyIdSymbols | ;
+nonDigitIdSymbols: NONDIGITIDSYMBOL nonDigitIdSymbolsTrail ;
+nonDigitIdSymbolsTrail: NONDIGITIDSYMBOL nonDigitIdSymbolsTrail | ;
+
+NULL: 'null';
+
+AT : '@';
+ELLIPSIS : '...';

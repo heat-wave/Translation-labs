@@ -9,7 +9,7 @@ import java.io.IOException;
 /**
  * Created by heat_wave on 6/9/16.
  */
-public class BaseTest {
+public abstract class BaseTest {
     String sourceFile;
     String startingRule;
     File outputDir;
@@ -17,15 +17,19 @@ public class BaseTest {
     BaseTest(String outputDir) {
         this.outputDir = new File(outputDir);
         this.outputDir.getParentFile().mkdirs();
+        //useGeneratedFiles();
     }
 
     public void run() {
-        ParserGenerator generator = new ParserGenerator(ExecutionMode.DEBUG);
+        ParserGenerator generator = new ParserGenerator(ExecutionMode.DEBUG, outputDir);
         try {
             generator.prepare(new File(sourceFile), startingRule);
+            generator.generateFiles();
         } catch (IOException e) {
             System.err.println("Test failed with: " + e.getMessage());
             e.printStackTrace();
         }
     }
+
+    abstract void useGeneratedFiles();
 }
