@@ -26,8 +26,9 @@ public class ObfuscationTest extends BaseTest {
     @Override
     void useGeneratedFiles() {
         try {
-            new Java2Parser().parse(new PushbackInputStream(new FileInputStream(
+            String res = new Java2Parser().parse(new PushbackInputStream(new FileInputStream(
                     new File("/home/heat_wave/IdeaProjects/ANTLR/src/task4/testing/SimpleCode.java")), 1024));
+            System.out.println(res);
         } catch (ParseException e) {
             e.printStackTrace();
         } catch (FileNotFoundException e) {

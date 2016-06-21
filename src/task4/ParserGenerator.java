@@ -353,17 +353,22 @@ public class ParserGenerator {
                 if (suitableProds > 1) {
                     throw new AssertionError(String.format("Grammar is not LL1, bad rule: %s", nonTerm));
                 } else {
-                    out.print(
-                            (ret ? "" : "                return;\n") +
-                                    "            }\n");
+                    if (getNonTerm(nonTerm).getReturnType().equals("String"))
+                        out.print(
+                                (ret ? "" : "                return \"\";\n") +
+                                        "            }\n");
+                    else
+                        out.print(
+                                (ret ? "" : "                return;\n") +
+                                        "            }\n");
                 }
             }
 
             out.print(
                     "            default:\n" +
-                            "                throw new AssertionError();\n" +
-                            "        }\n" +
-                            "    }\n\n"
+                    "                throw new AssertionError();\n" +
+                    "        }\n" +
+                    "    }\n\n"
             );
         }
 

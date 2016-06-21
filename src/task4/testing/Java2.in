@@ -6,57 +6,79 @@ package task4.testproduction;
     int varCount = 0;
 }
 
-compilationUnit
+compilationUnit -> String
     :   packageDeclaration modifiers typeDeclaration
+        {return packageDeclaration.get(0) + " " + modifiers.get(0) + " " + typeDeclaration.get(0);}
     ;
 
-packageDeclaration
-    :   PACKAGE qualifiedName SEMICOLON
+packageDeclaration -> String
+    :   PACKAGE qualifiedName SEMICOLON {return "package " + qualifiedName.get(0) + " ;" ;}
     ;
 
-importDeclaration
+importDeclaration -> String
     :   IMPORT qualifiedName importAll SEMICOLON
+        {return "import " + qualifiedName.get(0) + importAll.get(0) + ";";}
     ;
 
 SPACE : ' ' | '\n' | '\t';
 
-importAll
-    :   DOT MUL | ;
+importAll -> String
+    :   DOT MUL {return ".*";} | {return "";};
 
-qualifiedName
-    :   identifier qualifiedNameTrail ;
+qualifiedName -> String
+    :   identifier qualifiedNameTrail {return identifier.get(0) + qualifiedNameTrail.get(0);};
 
-qualifiedNameTrail
-    :   DOT qualifiedName qualifiedNameTrail | ;
+qualifiedNameTrail -> String
+    :   DOT qualifiedName qualifiedNameTrail {return "." + qualifiedName.get(0) + qualifiedNameTrail.get(0);}
+    |   {return "";};
 
-modifiers
-    :   publicT publicTrail | ;
+modifiers -> String
+    :   publicT publicTrail {return publicT.get(0) + publicTrail.get(0);}
+    |   {return "";};
 
-publicT: PUBLIC | PROTECTED | PRIVATE | ;
-publicTrail: STATIC staticTrail | staticTrail;
-staticTrail: ABSTRACT abstractTrail| abstractTrail;
-abstractTrail: FINAL | ;
+publicT -> String
+    : PUBLIC {return "public ";}
+    | PROTECTED {return "protected ";}
+    | PRIVATE {return "private ";}
+    | {return "";};
 
-classDeclaration
-    :   CLASS identifier extendsT ;
+publicTrail -> String
+    : STATIC staticTrail {return "static " + staticTrail.get(0);}
+    | staticTrail {return staticTrail.get(0);};
 
-extendsT
-    :   EXTENDS type extendsTrail | extendsTrail;
+staticTrail -> String
+    : ABSTRACT abstractTrail {return "abstract " + abstractTrail.get(0);}
+    | abstractTrail {return abstractTrail.get(0);};
 
-extendsTrail
-    :   IMPLEMENTS typeList classBody | classBody;
+abstractTrail -> String
+    : FINAL {return "final ";}
+    | {return "";};
 
-type
-    :   primitiveType arraysT | nonPrimitiveType arraysT;
+classDeclaration -> String
+    :   CLASS identifier extendsT {return "class " + identifier.get(0) + " " + extendsT.get(0);};
 
-arraysT
-    :   LBRACK RBRACK arraysT | ;
+extendsT -> String
+    :   EXTENDS type extendsTrail {return "extends " + type.get(0) + " " + extendsTrail.get(0);}
+    |   extendsTrail {return extendsTrail.get(0);};
 
-typeList
-    :   type | COMMA typeList ;
+extendsTrail -> String
+    :   IMPLEMENTS typeList classBody {return "implements " + typeList.get(0) + " " + classBody.get(0);}
+    |   classBody {return classBody.get(0);};
 
-nonPrimitiveType
-    :   identifier identifiersRec ;
+type -> String
+    :   primitiveType arraysT {return primitiveType.get(0) + arraysT.get(0);}
+    |   nonPrimitiveType arraysT {return nonPrimitiveType.get(0) + arraysT.get(0);};
+
+arraysT -> String
+    :   LBRACK RBRACK arraysT {return "[]" + arraysT.get(0);}
+    |   {return "";};
+
+typeList -> String
+    :   type {return type.get(0);}
+    |   COMMA typeList {return COMMA.get(0) + typeList.get(0);};
+
+nonPrimitiveType -> String
+    :   identifier identifiersRec {return identifier.get(0) + identifiersRec.get(0);};
 
 primitiveType -> String
     :   BOOLEAN {return BOOLEAN.get(0); }
@@ -68,144 +90,190 @@ primitiveType -> String
         | FLOAT {return FLOAT.get(0); }
         | DOUBLE {return DOUBLE.get(0); };
 
-identifiersRec
-    :   identifier identifiersRec | ;
+identifiersRec -> String
+    :   identifier identifiersRec {return identifier.get(0) + identifiersRec.get(0);}
+    |   {return "";};
 
-classBody
-    :   LBRACE classBodyDeclaration RBRACE
+classBody -> String
+    :   LBRACE classBodyDeclaration RBRACE {return "{" + classBodyDeclaration.get(0) + "}";}
     ;
 
-classBodyDeclaration
-    :   SEMICOLON classBodyDeclarationTrail
-    |   block classBodyDeclarationTrail
+classBodyDeclaration -> String
+    :   SEMICOLON classBodyDeclarationTrail {return ";" + classBodyDeclarationTrail.get(0);}
+    |   block classBodyDeclarationTrail {return block.get(0) + " " + classBodyDeclarationTrail.get(0);}
     |   modifiers memberDeclaration classBodyDeclarationTrail
-    |   memberDeclaration classBodyDeclarationTrail;
+            {return modifiers.get(0) + " " + memberDeclaration.get(0) + " " + classBodyDeclarationTrail.get(0);}
+    |   memberDeclaration classBodyDeclarationTrail {return memberDeclaration.get(0) + " " + classBodyDeclarationTrail.get(0);};
 
-classBodyDeclarationTrail : classBodyDeclaration | ;
+classBodyDeclarationTrail -> String
+    :   classBodyDeclaration {return classBodyDeclaration.get(0);}
+    |   {return "";};
 
-memberDeclaration
-    :   methodDeclaration | localVariableDeclaration;
+memberDeclaration -> String
+    :   VOID methodDeclaration {return "void " + methodDeclaration.get(0);}
+    |   type memberDeclarationTypeTrail {return type.get(0) + " " + memberDeclarationTypeTrail.get(0);};
 
-methodDeclaration
-    :   VOID identifier LPAREN formalParameterList RPAREN methodBodyT ;
+memberDeclarationTypeTrail -> String
+    :   localVariableDeclaration {return localVariableDeclaration.get(0);};
 
-formalParameterList
-    :   formalParameter formalParametersT | ;
+methodDeclaration -> String
+    :   identifier LPAREN formalParameterList RPAREN methodBodyT
+        {return identifier.get(0) + "(" + formalParameterList.get(0) + ")" + methodBodyT.get(0);};
 
-formalParametersT
-    :   COMMA formalParameter formalParametersT | ;
+formalParameterList -> String
+    :   formalParameter formalParametersT {return formalParameter.get(0) + " " + formalParametersT.get(0);}
+    |   {return "";};
 
-formalParameter
-    :   type variableDeclaratorId ;
+formalParametersT -> String
+    :   COMMA formalParameter formalParametersT {return ", " + formalParameter.get(0) + " " + formalParametersT.get(0);}
+    |   {return "";};
 
-variableDeclaratorId
-    :   identifier arraysT ;
+formalParameter -> String
+    :   type variableDeclaratorId {return type.get(0) + variableDeclaratorId.get(0);};
 
-methodBodyT
-    :   block | SEMICOLON ;
+variableDeclaratorId -> String
+    :   identifier arraysT {return identifier.get(0) + arraysT.get(0);};
 
-block
-    :   LBRACE blockStatementsRec RBRACE ;
+methodBodyT -> String
+    :   block {return block.get(0);}
+    |   SEMICOLON {return ";";};
 
-blockStatementsRec
-    :   blockStatement blockStatementsRec | ;
+block -> String
+    :   LBRACE blockStatementsRec RBRACE {return "{" + blockStatementsRec.get(0) + "}";};
 
-blockStatement
-    :   modifiers varOrTypeDeclaration | statement;
+blockStatementsRec -> String
+    :   blockStatement blockStatementsRec {return blockStatement.get(0) + "\n" + blockStatementsRec.get(0);}
+    |   {return "";};
 
-varOrTypeDeclaration
-    :   localVariableDeclaration | typeDeclaration;
+blockStatement -> String
+    :   modifiers varOrTypeDeclaration {return modifiers.get(0) + " " + varOrTypeDeclaration.get(0);}
+    |   statement {return statement.get(0);};
 
-localVariableDeclaration
-    :   type identifier localVariableInitT SEMICOLON;
+varOrTypeDeclaration -> String
+    :   localVariableDeclaration {return localVariableDeclaration.get(0);}
+    |   typeDeclaration {return typeDeclaration.get(0);};
 
-localVariableInitT
-    :   ASSIGN expression | ;
+localVariableDeclaration -> String
+    :   identifier localVariableInitT SEMICOLON
+        {return identifier.get(0) + localVariableInitT.get(0) + ";";};
 
-typeDeclaration
-    :   classDeclaration | SEMICOLON ;
+localVariableInitT -> String
+    :   ASSIGN expression {return " = " + expression.get(0);}
+    |   {return "";};
 
-statement
-    :   block
-    |   IF parExpression statement elseT
-    |   RETURN expressionT SEMICOLON
-    |   THROW expression SEMICOLON
-    |   BREAK identifier SEMICOLON
-    |   SEMICOLON
-    |   statementExpression SEMICOLON;
+typeDeclaration -> String
+    :   classDeclaration {return classDeclaration.get(0);}
+    |   SEMICOLON {return ";";};
 
-statementExpression
-    :   expression
+statement -> String
+    :   block {return block.get(0);}
+    |   IF parExpression statement elseT {return "if" + parExpression.get(0) + " " + statement.get(0) + elseT.get(0);}
+    |   RETURN expressionT SEMICOLON {return "return" + expressionT.get(0) + ";";}
+    |   THROW expression SEMICOLON {return "throw" + expression.get(0) + ";";}
+    |   BREAK identifier SEMICOLON {return "break" + identifier.get(0) + ";";}
+    |   SEMICOLON {return ";";}
+    |   statementExpression SEMICOLON {return statementExpression.get(0) + ";";};
+
+statementExpression -> String
+    :   expression {return expression.get(0);}
     ;
 
-parExpression
-    :   LPAREN expression RPAREN ;
+parExpression -> String
+    :   LPAREN expression RPAREN {return "(" + expression.get(0) + ")";};
 
-elseT
-    :   statement | ;
+elseT -> String
+    :   statement {return statement.get(0);}
+    |   {return "";};
 
-expressionT
-    :   expression | ;
+expressionT -> String
+    :   expression {return expression.get(0);}
+    |   {return "";};
 
-expression
-    :   primary expressionPrime
-    |   NEW creator expressionPrime
+expression -> String
+    :   primary expressionPrime {return primary.get(0) + " " + expressionPrime.get(0);}
+    |   NEW creator expressionPrime {return "new " + creator.get(0) + " " + expressionPrime.get(0);}
     |   LPAREN type RPAREN expression expressionPrime
-    |   mathop expression expressionPrime
+            {return "(" + type.get(0) + ")" + expression.get(0) + " " + expressionPrime.get(0);}
+    |   mathop expression expressionPrime {return mathop.get(0) + " " + expression.get(0) + " " + expressionPrime.get(0);}
     ;
 
-expressionPrime
-    :   DOT identifier expressionPrime
+expressionPrime -> String
+    :   DOT identifier expressionPrime {return "." + identifier.get(0) + " " + expressionPrime.get(0);}
     |   LBRACK expression RBRACK expressionPrime
+            {return "[" + expression.get(0) + "] " + expressionPrime.get(0);}
     |   LPAREN expressionList RPAREN expressionPrime
+            {return "(" + expressionList.get(0) + ") " + expressionPrime.get(0);}
     |   division expression expressionPrime
+            {return division.get(0) + " " + expression.get(0) + " " + expressionPrime.get(0);}
     |   INSTANCEOF type expressionPrime
+            {return "instanceof " + type.get(0) + " " + expressionPrime.get(0);}
     |   comp expression expressionPrime
+            {return comp.get(0) + expression.get(0) + " " + expressionPrime.get(0);}
     |   CARET expression expressionPrime
+            {return CARET.get(0) + expression.get(0) + " " + expressionPrime.get(0);}
     |   AND expression expressionPrime
+            {return AND.get(0) + expression.get(0) + " " + expressionPrime.get(0);}
     |   OR expression expressionPrime
+            {return OR.get(0) + expression.get(0) + " " + expressionPrime.get(0);}
     |   QUESTION expression COLON expression expressionPrime
-    |   ;
+            {return "?" + expression.get(0) + ": " + expression.get(1) + " " + expressionPrime.get(0);}
+    |   {return "";};
 
-mathop: ADD | SUB ;
-division: MUL | DIV | MOD;
-comp: LE | GE | GT | LT | EQUAL | NOTEQUAL;
+mathop -> String
+    : ADD {return "+";}
+    | SUB {return "-";};
 
-creator
-    :   createdName classCreatorRest
+division -> String
+    : MUL {return "*";}
+    | DIV {return "/";}
+    | MOD {return "%";};
+comp -> String
+    : LE {return "<=";}
+    | GE {return ">=";}
+    | GT {return ">";}
+    | LT {return "<";}
+    | EQUAL {return "=";}
+    | NOTEQUAL {return "!=";};
+
+creator -> String
+    :   createdName classCreatorRest {return createdName.get(0) + " " + classCreatorRest.get(0);}
     ;
 
-createdName
-    :   identifier
-    |   primitiveType
+createdName -> String
+    :   identifier {return identifier.get(0);}
+    |   primitiveType {return primitiveType.get(0);}
     ;
 
-classCreatorRest
-    :   arguments classBodyT
+classCreatorRest -> String
+    :   arguments classBodyT {return arguments.get(0) + " " + classBodyT.get(0);}
     ;
 
-classBodyT: classBody | ;
+classBodyT -> String
+    : classBody {return classBody.get(0);}
+    | {return "";};
 
-primary
-    :   THIS
-    |   SUPER
-    |   literal
-    |   identifier ;
+primary -> String
+    :   THIS {return "this";}
+    |   SUPER {return "super";}
+    |   literal {return literal.get(0);}
+    |   identifier {return identifier.get(0);};
 
-arguments
-    :   LPAREN expressionList RPAREN | ;
+arguments -> String
+    :   LPAREN expressionList RPAREN {return "(" + expressionList.get(0) + ")";}
+    |   {return "";};
 
-expressionList
-    :   expression COMMA expressionList |
+expressionList -> String
+    :   expression COMMA expressionList {return expression.get(0) + ", " + expressionList.get(0);}
+    |   {return "";}
     ;
 
 
-literal
-    :   numericLiteral
-    |   characterLiteral
-    |   stringLiteral
-    |   booleanLiteral
-    |   NULL ;
+literal -> String
+    :   numericLiteral {return numericLiteral.get(0);}
+    |   characterLiteral {return characterLiteral.get(0);}
+    |   stringLiteral {return stringLiteral.get(0);}
+    |   booleanLiteral {return booleanLiteral.get(0);}
+    |   NULL {return "null";};
 
 
 LPAREN          : '(';
@@ -303,28 +371,35 @@ ZERO : '0';
 DIGIT :  '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
 NONZERODIGIT :  '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
 
-numericLiteral
-    :   ZERO zeroNumericTrail | NONZERODIGIT nonzeroNumericTrail;
+numericLiteral -> String
+    :   ZERO zeroNumericTrail {return "0" + zeroNumericTrail.get(0);}
+    |   NONZERODIGIT nonzeroNumericTrail {return NONZERODIGIT.get(0) + nonzeroNumericTrail.get(0);};
 
-zeroNumericTrail
-    :   DOT oneOrMoreDigits | ;
+zeroNumericTrail -> String
+    :   DOT oneOrMoreDigits {return "." + oneOrMoreDigits.get(0);}
+    |   {return "";};
 
-nonzeroNumericTrail
-    :   ZERO nonzeroNumericTrail | NONZERODIGIT nonzeroNumericTrail | zeroNumericTrail;
+nonzeroNumericTrail -> String
+    :   ZERO nonzeroNumericTrail {return "0" + nonzeroNumericTrail.get(0);}
+    |   NONZERODIGIT nonzeroNumericTrail {return NONZERODIGIT.get(0) + nonzeroNumericTrail.get(0);}
+    |   zeroNumericTrail {return zeroNumericTrail.get(0);};
 
-digits:
-    ZERO digits | NONZERODIGIT digits |;
+digits -> String
+    :   ZERO digits {return "0" + digits.get(0);}
+    |   NONZERODIGIT digits {return NONZERODIGIT.get(0) + digits.get(0);}
+    |   {return "";};
 
-oneOrMoreDigits:
-    ZERO digits | NONZERODIGIT digits;
+oneOrMoreDigits -> String
+    :   ZERO digits {return "0" + digits.get(0);}
+    |   NONZERODIGIT digits {return NONZERODIGIT.get(0) + digits.get(0);};
 
-floatingPointLiteral
-    :   digits DOT oneOrMoreDigits
+floatingPointLiteral -> String
+    :   digits DOT oneOrMoreDigits {return digits.get(0) + "." + oneOrMoreDigits.get(0);}
     ;
 
-booleanLiteral
-    :   TRUE
-    |   FALSE
+booleanLiteral -> String
+    :   TRUE {return "true";}
+    |   FALSE {return "false";}
     ;
 
 TRUE: 'true';
@@ -333,11 +408,13 @@ FALSE:'false';
 SINGLEQUOTE: '\'';
 DOUBLEQUOTE: '\"';
 
-characterLiteral: SINGLEQUOTE anyIdSymbol SINGLEQUOTE;
-stringLiteral: DOUBLEQUOTE anyIdSymbols DOUBLEQUOTE;
+characterLiteral -> String
+    : SINGLEQUOTE anyIdSymbol SINGLEQUOTE {return "\'" + anyIdSymbol.get(0) + "\'";};
+stringLiteral -> String
+    : DOUBLEQUOTE anyIdSymbols DOUBLEQUOTE {return "\"" + anyIdSymbols.get(0) + "\"";};
 
-identifier
-    :   NONDIGITIDSYMBOL anyIdSymbols
+identifier -> String
+    :   NONDIGITIDSYMBOL anyIdSymbols {return NONDIGITIDSYMBOL.get(0) + anyIdSymbols.get(0);}
     ;
 
 NONDIGITIDSYMBOL:  'a' | 'b' | 'c' | 'd' | 'e' | 'f' |
@@ -348,10 +425,20 @@ NONDIGITIDSYMBOL:  'a' | 'b' | 'c' | 'd' | 'e' | 'f' |
                   'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' |
                   'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' |
                   'U' | 'V' | 'W' | 'X' | 'Y' | 'Z' | '$' | '_';
-anyIdSymbol: ZERO | NONZERODIGIT | NONDIGITIDSYMBOL;
-anyIdSymbols: anyIdSymbol anyIdSymbols | ;
-nonDigitIdSymbols: NONDIGITIDSYMBOL nonDigitIdSymbolsTrail ;
-nonDigitIdSymbolsTrail: NONDIGITIDSYMBOL nonDigitIdSymbolsTrail | ;
+anyIdSymbol -> String
+    : ZERO {return "0";}
+    | NONZERODIGIT {return NONZERODIGIT.get(0);}
+    | NONDIGITIDSYMBOL {return NONDIGITIDSYMBOL.get(0);};
+anyIdSymbols -> String
+    : anyIdSymbol anyIdSymbols {return anyIdSymbol.get(0) + anyIdSymbols.get(0);}
+    | {return "";};
+nonDigitIdSymbols -> String
+    : NONDIGITIDSYMBOL nonDigitIdSymbolsTrail
+        {return NONDIGITIDSYMBOL.get(0) + nonDigitIdSymbolsTrail.get(0);};
+nonDigitIdSymbolsTrail -> String
+    : NONDIGITIDSYMBOL nonDigitIdSymbolsTrail
+        {return NONDIGITIDSYMBOL.get(0) + nonDigitIdSymbolsTrail.get(0);}
+    | {return "";};
 
 NULL: 'null';
 

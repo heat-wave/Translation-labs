@@ -5,8 +5,4 @@ public class SimpleCode {
 
     public static void main(String[] args) {
     }
-
-    String test() {
-        return null;
-    }
 }
