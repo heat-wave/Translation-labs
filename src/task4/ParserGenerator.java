@@ -286,9 +286,10 @@ public class ParserGenerator {
 
         for (String nonTerm : nonTerminals.keySet()) {
             out.println("\tprivate " + getNonTerm(nonTerm).getReturnType() + " " + nonTerm + "(" + getNonTerm(nonTerm).getDeclAttrs(true) + ") throws ParseException, IOException {");
-            out.println("\t\twhile (lex.curToken() == Token.SPACE) {\n" +
-                    "\t\t\tlex.nextToken();\n" +
-                    "\t\t}\n");
+            if (terminals.containsKey("SPACE"))
+                out.println("\t\twhile (lex.curToken() == Token.SPACE) {\n" +
+                        "\t\t\tlex.nextToken();\n" +
+                        "\t\t}\n");
             out.println("\t\tswitch (lex.curToken()) {");
 
             Set<String> set = new HashSet<>(first.get(nonTerm));
@@ -312,6 +313,7 @@ public class ParserGenerator {
                     } else if (first.get(production.get(0).getName()).contains(term)) {
                         for (Node node : production.getNodes()) {
                             String name = node.getName();
+
                             if (!rules.contains(node.getName())) {
                                 if (nonTerminals.containsKey(name) && !getNonTerm(name).getReturnType().equals("void")) {
                                     out.println("\t\t\t\tList<" + getNonTerm(name).getReturnType() + "> " + name + " = new ArrayList<>();");
@@ -328,9 +330,10 @@ public class ParserGenerator {
                         for (Node node : production.getNodes()) {
                             String name = node.getName();
                             if (terminals.containsKey(node.getName())) {
-                                out.println("\t\t\t\twhile (lex.curToken() == Token.SPACE) {\n" +
-                                        "\t\t\t\t\tlex.nextToken();\n" +
-                                        "\t\t\t\t}");
+                                if (terminals.containsKey("SPACE"))
+                                    out.println("\t\t\t\twhile (lex.curToken() == Token.SPACE) {\n" +
+                                            "\t\t\t\t\tlex.nextToken();\n" +
+                                            "\t\t\t\t}");
                                 out.println("\t\t\t\tif (lex.curToken().toString().equals(\"" + name + "\")) {");
                                 out.println("\t\t\t\t\t" + name + ".add(lex.curString());");
                                 out.println("\t\t\t\t} else {");

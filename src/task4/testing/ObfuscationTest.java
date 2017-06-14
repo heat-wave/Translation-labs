@@ -1,9 +1,6 @@
 package task4.testing;
 
-import org.StructureGraphic.v1.DSutils;
-import task4.testproduction.Java2Parser;
-import task4.testproduction.RegexParser;
-import task4.utils.Tree;
+import task4.testproduction.java.Java2Parser;
 
 import java.io.*;
 import java.text.ParseException;
@@ -14,7 +11,7 @@ import java.text.ParseException;
 public class ObfuscationTest extends BaseTest {
 
     public static void main(String[] args) {
-        new ObfuscationTest("/home/heat_wave/IdeaProjects/ANTLR/src/task4/testproduction/").useGeneratedFiles();
+        new ObfuscationTest("/home/heat_wave/IdeaProjects/ANTLR/src/task4/testproduction/java").useGeneratedFiles();
     }
 
     public ObfuscationTest(String outputDir) {

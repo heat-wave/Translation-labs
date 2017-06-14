@@ -7,7 +7,7 @@ import task4.testing.*;
  */
 public class TestRunner {
     public static void main(String[] args) {
-        //new RegexTest("/home/heat_wave/IdeaProjects/ANTLR/src/task4/testproduction/").run();
-        new ObfuscationTest("/home/heat_wave/IdeaProjects/ANTLR/src/task4/testproduction/").run();
+        new RegexTest("/home/heat_wave/IdeaProjects/ANTLR/src/task4/testproduction/regex").run();
+        new ObfuscationTest("/home/heat_wave/IdeaProjects/ANTLR/src/task4/testproduction/java").run();
     }
 }

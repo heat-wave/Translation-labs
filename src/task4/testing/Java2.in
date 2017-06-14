@@ -1,5 +1,5 @@
 @header {
-package task4.testproduction;
+package task4.testproduction.java;
 import java.util.*;
 }
 
@@ -353,7 +353,7 @@ RETURN        : 'return';
 SHORT         : 'short';
 STATIC        : 'static';
 STRICTFP      : 'strictfp';
-STRING        : 'String'
+STRING        : 'String';
 SUPER         : 'super';
 SWITCH        : 'switch';
 SYNCHRONIZED  : 'synchronized';
